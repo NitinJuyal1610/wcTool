@@ -41,16 +41,21 @@ export const calculateStats = async (
     lastByte = sentence.slice(-1);
 
     //char count
+    charCount += sentence.length;
   });
 
   readableStream.on('end', () => {
     let result = '';
+    let defaultOptions = false;
 
-    if (options.lines) result += `lines ${linesCount} `;
-    if (options.words) result += `words ${wordCount} `;
-    if (options.bytes) result += `bytes ${byteCount} `;
+    if (Object.keys(options).length == 0) defaultOptions = true;
 
-    result += `- ${fileName}`;
+    if (options.lines || defaultOptions) result += `lines ${linesCount} `;
+    if (options.words || defaultOptions) result += `words ${wordCount} `;
+    if (options.bytes || defaultOptions) result += `bytes ${byteCount} `;
+    if (options.chars || defaultOptions) result += `chars ${charCount} `;
+
+    result += `: ${fileName}`;
     console.log(result);
   });
 };
