@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { calculateStats } from './logic/fileStream.js';
 
 const program = new Command();
 program
@@ -13,6 +14,12 @@ program
   .parse(process.argv);
 
 const options = program.opts();
+
+const files = [...program.args];
+
+files.forEach(async (file) => {
+  await calculateStats(file, options);
+});
 
 if (!program.args.length) {
   program.outputHelp();
