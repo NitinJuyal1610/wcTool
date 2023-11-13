@@ -1,12 +1,11 @@
-#!/usr/bin/env node
-import { Command } from 'commander';
 import { calculateStats } from './logic/fileStream.js';
-
+import { stdin } from 'process';
+import { Command } from 'commander';
 const program = new Command();
 program
   .version('1.0.0')
   .description('wc tool')
-  .argument('[filePath]', 'File path')
+  .usage('[options] <filePath> ')
   .option('-l, --lines', 'Count the number of lines in a file')
   .option('-m, --chars', 'Count the number of characters in a file')
   .option('-w, --words', 'Count the number of words in a file')
@@ -17,10 +16,18 @@ const options = program.opts();
 
 const files = [...program.args];
 
-files.forEach(async (file) => {
+const handleFile = async (file: string) => {
   await calculateStats(file, options);
-});
+};
 
-if (!program.args.length) {
-  program.outputHelp();
+const handleStdin = async () => {
+  await calculateStats('', options);
+};
+
+if (files.length > 0) {
+  files.forEach(handleFile);
+} else if (!stdin.isTTY) {
+  handleStdin();
+} else {
+  program.help();
 }
